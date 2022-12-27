@@ -6,7 +6,6 @@ import com.example.mvvm_hilt.retrofit.NetworkMapper
 import com.example.mvvm_hilt.room.BlogDao
 import com.example.mvvm_hilt.room.CacheMapper
 import com.example.mvvm_hilt.utils.DataState
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -29,12 +28,23 @@ constructor(
                 blogDao.insert(cacheMapper.mapToEntity(blog))
             }
 
-            val cachedBlogs = blogDao.get()
+            val cachedBlogs = blogDao.getDao()
             emit(DataState.Success(cacheMapper.mapFromEntityList(cachedBlogs)))
+            emit(DataState.Offline(cacheMapper.mapFromEntityList(cachedBlogs)))
         } catch (e: Exception) {
             emit(DataState.Error(e))
         }
     }
 
+    suspend fun getBlogFromDao(): Flow<DataState<List<Blog>>> = flow {
+        emit(DataState.Loading)
+        try {
+            val cachedBlogs = blogDao.getDao();
+            emit(DataState.Success(cacheMapper.mapFromEntityList(cachedBlogs)))
+            emit(DataState.Offline(cacheMapper.mapFromEntityList(cachedBlogs)))
+        } catch(e: Exception) {
+            emit(DataState.Error(e))
+        }
+    }
 
 }

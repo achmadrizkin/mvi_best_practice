@@ -1,10 +1,12 @@
 package com.example.mvvm_hilt.view_model
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.mvvm_hilt.model.Blog
 import com.example.mvvm_hilt.repo.MainRepo
 import com.example.mvvm_hilt.utils.DataState
-import dagger.assisted.Assisted
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -26,6 +28,22 @@ class MainViewModel @Inject constructor(
                 is MainStateEvent.GetBlogEvents -> {
                     mainRepo.getBlog().onEach { dataState ->
                         _dataState.value = dataState
+                    }.launchIn(viewModelScope)
+                }
+
+                is MainStateEvent.None -> {
+
+                }
+            }
+        }
+    }
+
+    fun setStateEventFromDao(mainStateEvent: MainStateEvent) {
+        viewModelScope.launch {
+            when(mainStateEvent) {
+                is MainStateEvent.GetBlogEvents -> {
+                    mainRepo.getBlogFromDao().onEach {
+                        dataState -> _dataState.value = dataState
                     }.launchIn(viewModelScope)
                 }
 

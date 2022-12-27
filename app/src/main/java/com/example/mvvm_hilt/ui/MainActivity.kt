@@ -25,11 +25,12 @@ class MainActivity : AppCompatActivity() {
 
         //
         subscribeObservers()
-        viewModel.setStateEvent(MainStateEvent.GetBlogEvents)
+        viewModel.setStateEventFromDao(MainStateEvent.GetBlogEvents)
     }
 
     private fun subscribeObservers() {
         viewModel.dataState.observe(this, Observer { it ->
+
             when (it) {
                 is DataState.Success<List<Blog>> -> {
                     displayProgressBar(false)
@@ -43,6 +44,11 @@ class MainActivity : AppCompatActivity() {
 
                 is DataState.Loading -> {
                     displayProgressBar(true)
+                }
+
+                is DataState.Offline -> {
+                    displayProgressBar(false)
+                    appendBlogTitle(it.data)
                 }
             }
         })
