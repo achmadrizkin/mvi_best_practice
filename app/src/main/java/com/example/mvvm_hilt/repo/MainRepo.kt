@@ -23,14 +23,8 @@ constructor(
         emit(DataState.Loading)
         try {
             val networkBlog = blogRetrofit.get()
-            val blogs = networkMapper.mapFromEntityList(networkBlog)
-            for (blog in blogs) {
-                blogDao.insert(cacheMapper.mapToEntity(blog))
-            }
 
-            val cachedBlogs = blogDao.getDao()
-            emit(DataState.Success(cacheMapper.mapFromEntityList(cachedBlogs)))
-            emit(DataState.Offline(cacheMapper.mapFromEntityList(cachedBlogs)))
+            emit(DataState.Success(networkMapper.mapFromEntityList(networkBlog)))
         } catch (e: Exception) {
             emit(DataState.Error(e))
         }
