@@ -15,3 +15,7 @@ This app uses [_**MVI (Model View Intent)**_](https://proandroiddev.com/mvi-arch
 start -> get data from api -> save to local database (room) -> show data from local (end) -> end
 - If app is not first launch:
 start -> show data from local (room) -> end
+
+## API Response
+- https://achmadrizki.my.id/test_mvi/get_all_data.php
+- https://achmadrizki.my.id/test_mvi/get_all_ads.php
